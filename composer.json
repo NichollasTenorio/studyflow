@@ -1,0 +1,10 @@
+{
+    "name": "admin/routes",
+    "autoload": {
+        "psr-4": {
+            "app\\": "src/app/",
+            "core\\": "core/"
+        }
+    },
+    "require": {}
+}

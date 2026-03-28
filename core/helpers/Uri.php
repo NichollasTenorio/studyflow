@@ -3,8 +3,9 @@ namespace core\helpers;
 
 class Uri
 {
-    public static function getUri($type):string
+    public static function getUri($type = 'path')
     {
-        return parse_url($_SERVER['REQUEST_URI'])[$type];
+        $uri = parse_url($_SERVER['REQUEST_URI']);
+        return $uri[$type] ?? '/';
     }
 }

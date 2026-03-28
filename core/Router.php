@@ -1,74 +1,73 @@
 <?php
 namespace core;
+
 use Exception;
 use core\helpers\Request;
 use core\helpers\Uri;
 
 class Router
 {
-    const CONTROLLER_NAMESPACE = "app\\controllers\\";
-    
-    public static function load(string $controller, string $method)
-    {
-        $controllerNamespace = self::CONTROLLER_NAMESPACE.$controller;
-        if(!class_exists($controllerNamespace)){
-            throw new Exception("O controlador {$controller} não existe!");
-        }
-
-        $controllerInstance = new $controllerNamespace;
-
-        if(!method_exists($controllerInstance, $method)){
-            throw new Exception ("O método {$method} não existe!");
-        }
-
-        $controllerInstance->$method();
-    }
-
-    public static function routes():array
-    {
-        return [
-            'get' => [
-                '/' => fn() => self::load('HomeController','index'),
-                '/login' => fn() => self::load('AuthController', 'login')
-            ],
-
-            'post' => [
-                '/login' => fn() => self::load('AuthController', 'store')
-            ]
-        ];
-    }
-
     public static function run()
     {
-        try
-        {
-            $routes  = self::routes();
-            $request = Request::getMethod();
-            $uri     = Uri::getUri('path');
+        try {
+            $routes = Route::all();
+            $method = Request::getMethod();
+            $uri    = Uri::getUri('path');
 
-            $basePath = '/routes';
+            // ajuste caso use /teste como base
+            $basePath = '/teste';
             $uri = str_replace($basePath, '', $uri);
 
-            if(!isset($routes[$request])){
-                throw new \Exception('A rota não existe!');
+            if (!isset($routes[$method])) {
+                throw new Exception("Método HTTP {$method} não encontrado.");
             }
 
-            if(!array_key_exists($uri, $routes[$request])){
-                throw new \Exception('A rota não existe!'); 
+            $matchedRoute = null;
+            $params = [];
+
+            // procurar rota exata ou com parâmetro
+            foreach ($routes[$method] as $route) {
+                if (preg_match($route['pattern'], $uri, $matches)) {
+                    array_shift($matches); // remove URL inteira
+                    $params = $matches;
+                    $matchedRoute = $route;
+                    break;
+                }
             }
 
-            $routes = $routes[$request][$uri];
-
-            if(!is_callable($routes)){
-                throw new \Exception("A rota {$uri} não é chamável");
+            if (!$matchedRoute) {
+                throw new Exception("Rota não encontrada: {$uri}");
             }
 
-            $routes();
-            
+            // executar middlewares
+            foreach ($matchedRoute['middlewares'] as $middleware) {
+                (new $middleware)->handle();
+            }
+
+            self::executeAction($matchedRoute['action'], $params);
+
+        } catch (\Throwable $th) {
+            echo "ERRO: " . $th->getMessage();
         }
-        catch(\Throwable $th)
-        {
-            echo 'ERRO: ' . $th->getMessage();
+    }
+
+    private static function executeAction(string $action, array $params = [])
+    {
+        list($controller, $method) = explode('@', $action);
+
+        $controller = "app\\controllers\\{$controller}";
+
+        if (!class_exists($controller)) {
+            throw new Exception("Controller {$controller} não existe.");
         }
+
+        $instance = new $controller;
+
+        if (!method_exists($instance, $method)) {
+            throw new Exception("Método {$method} não existe em {$controller}.");
+        }
+
+        // executa com parâmetros da rota
+        $instance->$method(...$params);
     }
 }

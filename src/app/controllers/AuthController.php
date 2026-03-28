@@ -28,14 +28,17 @@ class AuthController
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $email    = $_POST['email'];
             $password = $_POST['password'];
+            $username = $_POST['username'];
         }
 
         Validator::required($email);
         Validator::required($password);
+        Validator::required($username);
         Validator::email($email);
+        Validator::min($username, 8);
         Validator::min($password, 8);
 
-        if($this->model->store($email, $password)){
+        if($this->model->store($email, $password, $username)){
             header('Location: /teste/login');
             exit;
         }
@@ -58,6 +61,7 @@ class AuthController
             $_SESSION['user'] = [
                 'userID' => $user->getUserID(),
                 'userEmail' => $user->getUserEmail(),
+                'userName' => $user->getUserName(),
                 'isLogged' => true
             ];
 

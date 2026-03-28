@@ -5,7 +5,8 @@ class UserEntity
 {
     public function __construct(
         private int $userID,
-        private string $userEmail
+        private string $userEmail,
+        private string $userName
     )
     {}
 
@@ -17,5 +18,10 @@ class UserEntity
     public function getUserEmail():string
     {
         return $this->userEmail;
+    }
+
+    public function getUserName():string
+    {
+        return $this->userName;
     }
 }

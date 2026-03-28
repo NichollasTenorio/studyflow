@@ -16,10 +16,14 @@ require_once __DIR__ . "/utilities/loginNavbar.php";
         <div class="row">
             <div class="col-4 mx-auto bg-body-tertiary mt-4 shadow p-3 mb-5 bg-body-tertiary rounded">
                 <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                    <h2 class="" style="line-height: 1;">Register</h2>
+                    <h2 class="" style="line-height: 1;">SignUpr</h2>
                     <i class="fa-solid fa-list-check" style="font-size: 1.5rem; line-height: 1;"></i>
                 </div>
                 <form action="/teste/signup" method="post">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Username</label>
+                        <input name="username" type="text" class="form-control" id="exampleInputUsername" aria-describedby="usernameHelp" required>
+                    </div>                    
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Email address</label>
                         <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
@@ -28,10 +32,6 @@ require_once __DIR__ . "/utilities/loginNavbar.php";
                     <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Password</label>
                         <input name="password" type="password" class="form-control" id="exampleInputPassword1" required>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
                     </div>
                     <div class="text-center">
                         <a href="/teste/login">Already have an account? Log in.</a>

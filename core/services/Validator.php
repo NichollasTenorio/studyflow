@@ -17,9 +17,9 @@ class Validator
         }
     }
 
-    public static function min($password, $min = 8)
+    public static function min($field, $min = 8)
     {
-        if(strlen($password) < $min){
+        if(strlen($field) < $min){
             die("Mínimo de {$min} caráctereres!");
         }
     }

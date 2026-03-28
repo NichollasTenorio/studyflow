@@ -14,17 +14,18 @@ class AuthModel
         $this->db = Database::run();
     }
 
-    public function store(string $email, string $password): bool
+    public function store(string $email, string $password, string $username): bool
     {
         try {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $this->db->prepare(
-                "INSERT INTO users (userEmail, userPassword) VALUES (:email, :password)"
+                "INSERT INTO users (userEmail, userPassword, username) VALUES (:email, :password, :username)"
             );
 
             return $stmt->execute([
                 ':email' => $email,
-                ':password' => $hashed_password
+                ':password' => $hashed_password,
+                ':username' => $username
             ]);
         } catch (\Exception $e) {
             die('ERRO: ' . $e->getMessage());
@@ -53,6 +54,6 @@ class AuthModel
             return false;
         }
 
-        return new UserEntity($user['ID_user'], $user['userEmail']);
+        return new UserEntity($user['ID_user'], $user['userEmail'], $user['userName']);
     }
 }

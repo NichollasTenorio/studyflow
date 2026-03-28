@@ -10,6 +10,7 @@ Route::post('/login', 'AuthController@enter');
 
 Route::get('/signup', 'AuthController@signup');
 Route::post('/signup', 'AuthController@store');
+Route::post('/storeNote', 'DashboardController@store');
 
 // rota protegida por middleware
 Route::get('/logout',  'AuthController@logout', [AuthMiddleware::class]);
